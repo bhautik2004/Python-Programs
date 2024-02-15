@@ -1,0 +1,11 @@
+def insertion_sort(lst):
+    for i in range(1,len(lst)):
+        tmp=lst[i]
+        j=i-1
+        while j>=0 and tmp<lst[j]:
+            lst[j+1]=lst[j]
+            j-=1
+        lst[j+1]=tmp
+list1=[555,2,6,4,1,8,4,2,6,9,755,4,3,4,5,6,7]
+insertion_sort(list1)
+print(list1)
