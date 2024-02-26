@@ -2,14 +2,19 @@ import mysql.connector as m
 from tkinter import *
 from tkinter import messagebox
 
-con=m.connect(host="localhost",user="root",password="",database="db1")
+con=m.connect(host="localhost",user="root",password="")
 cur=con.cursor()
-
-#cur.execute("CREATE DATABASE db1")
-#print("Database Created Successfully....")
+cur.execute("CREATE DATABASE IF NOT EXISTS db1")
+con.database='db1'
+print("Database Created Successfully....")
 cur.execute("CREATE TABLE IF NOT EXISTS student(rollno int(20),name varchar(50),mobile varchar(50),city varchar(50))")
 
-
+def clearentry():
+    rollno.delete(0,END)
+    name.delete(0,END)
+    mobile.delete(0,END)
+    city.delete(0,END)
+    
 def insert():
     rn=rollno.get()
     nm=name.get()
@@ -28,6 +33,8 @@ def insert():
             cur.execute(f"INSERT INTO student VALUES({rn},'{str(nm)}','{str(mn)}','{str(cty)}')")
             con.commit()
             messagebox.showinfo("Success","Record Inserted..")
+            clearentry()
+            
         except Exception as e:
             print(str(e))
             
@@ -40,6 +47,7 @@ def delete():
             cur.execute(f"DELETE FROM student WHERE rollno={rn}")
             con.commit()
             messagebox.showinfo("Success","Record Deleted..")
+            clearentry()
         except Exception as e:
             print(str(e))
             
@@ -55,6 +63,7 @@ def update():
             cur.execute(f"UPDATE student SET name='{str(nm)}',mobile='{str(mn)}',city='{str(cty)}' WHERE rollno={rn}")
             con.commit()
             messagebox.showinfo("Success","Record Updated..")
+            clearentry()
         except Exception as e:
             print(str(e))
 
@@ -65,13 +74,13 @@ def select():
     else:
         try:
             cur.execute(f"SELECT * FROM student WHERE rollno={rn}")
-            record = cur.fetchall()
+            record = cur.fetchone()
             if record:
-               
-                rollno.insert(0,record[0][0])
-                name.insert(0,record[0][1])
-                mobile.insert(0,record[0][2])
-                city.insert(0,record[0][3])
+                clearentry()
+                rollno.insert(0,record[0])
+                name.insert(0,record[1])
+                mobile.insert(0,record[2])
+                city.insert(0,record[3])
                 con.commit()
             else:
                 messagebox.showinfo("Error", "No record found with the given Roll No")
